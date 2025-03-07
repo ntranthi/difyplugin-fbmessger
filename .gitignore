@@ -32,7 +32,6 @@ ENV/
 *.swo
 
 # Dify specific
-.dify/
 
 # Logs
 *.log
