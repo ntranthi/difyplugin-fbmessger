@@ -1,14 +1,15 @@
 {
     "name": "facebook-messenger",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A Dify plugin for Facebook Messenger integration",
-    "author": "Your Name",
-    "email": "your.email@example.com",
+    "author": "Thi Nguyen",
+    "email": "thi@agrisung.com",
     "license": "MIT",
-    "repository": "https://github.com/yourusername/dify-facebook-messenger",
+    "repository": "https://github.com/ntranthi/difyplugin-fbmessger",
     "files": [
         "app.py",
         "config.yaml",
+        "manifest.yaml",
         "README.md",
         "requirements.txt"
     ],

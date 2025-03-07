@@ -1,0 +1,38 @@
+api_version: v1
+kind: plugin
+metadata:
+  name: facebook-messenger
+  description: A plugin for handling Facebook Messenger webhooks and sending messages
+spec:
+  runtime: python3.10
+  dependencies:
+    - requests==2.31.0
+    - pydantic==2.5.2
+  api:
+    http:
+      webhook:
+        path: /webhook
+        method: POST
+        response_schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+            message:
+              type: string
+            data:
+              type: object
+    configuration:
+      - name: page_access_token
+        type: secret
+        required: true
+        description: Facebook Page Access Token for sending messages
+      - name: verify_token
+        type: secret
+        required: true
+        description: Webhook verification token for Facebook Messenger
+      - name: api_version
+        type: string
+        required: false
+        default: "v18.0"
+        description: Facebook Graph API version 
