@@ -1,106 +1,123 @@
-# Dify Python Plugin Template
+# Facebook Messenger Plugin for Dify
 
-A template for creating Python plugins for Dify. This template provides a basic structure and implementation that you can build upon for your specific use case.
+[![Test](https://github.com/[username]/dify-facebook-messenger/actions/workflows/test.yml/badge.svg)](https://github.com/[username]/dify-facebook-messenger/actions/workflows/test.yml)
+[![Release](https://github.com/[username]/dify-facebook-messenger/actions/workflows/release.yml/badge.svg)](https://github.com/[username]/dify-facebook-messenger/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A Dify plugin for integrating with Facebook Messenger. This plugin handles webhook events from Facebook Messenger and can send messages back to users.
 
 ## Features
 
-- Robust error handling and logging
+- Facebook Messenger webhook handling
+- Automatic message response
+- Webhook verification
+- Error handling and logging
 - Request validation using Pydantic
-- Configurable retry mechanism for API calls
 - Type hints for better code maintainability
-- Example processing logic
+
+## Installation
+
+### From GitHub Releases
+
+1. Go to the [Releases](https://github.com/[username]/dify-facebook-messenger/releases) page
+2. Download the latest `facebook-messenger-x.x.x.difypkg` file
+3. Install the plugin through your Dify dashboard
+
+### From Source
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/[username]/dify-facebook-messenger.git
+   cd dify-facebook-messenger
+   ```
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Build the package:
+   ```bash
+   python build.py
+   ```
+
+4. The generated `facebook-messenger-x.x.x.difypkg` file can be installed through your Dify dashboard
 
 ## Configuration
 
 The plugin requires the following configuration:
 
 ### Required Settings
-- `api_key` (secret): API key for authentication
+- `page_access_token` (secret): Your Facebook Page Access Token
+- `verify_token` (secret): Your webhook verification token (you choose this)
 
 ### Optional Settings
-- `max_retries` (number): Maximum number of retry attempts for API calls (default: 3)
-
-## API Endpoints
-
-### POST /process
-
-Main endpoint for processing requests.
-
-#### Request Format
-```json
-{
-    "input_text": "Text to process",
-    "parameters": {
-        "optional_param1": "value1",
-        "optional_param2": "value2"
-    }
-}
-```
-
-#### Response Format
-```json
-{
-    "success": true,
-    "message": "Request processed successfully",
-    "data": {
-        "input_length": 123,
-        "processed_text": "PROCESSED TEXT",
-        "parameters_received": {
-            "optional_param1": "value1",
-            "optional_param2": "value2"
-        }
-    }
-}
-```
-
-## Error Handling
-
-The plugin includes comprehensive error handling:
-- Input validation errors
-- API request failures with retry mechanism
-- General exception handling
+- `api_version` (string): Facebook Graph API version (default: "v18.0")
 
 ## Development
 
 ### Prerequisites
 - Python 3.10 or higher
 - pip for package management
+- Facebook Page
+- Facebook App with Messenger functionality enabled
 
-### Setup
-1. Clone this repository
-2. Install dependencies:
+### Setup for Development
+
+1. Create a virtual environment:
    ```bash
-   pip install -r requirements.txt
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-### Testing
-To test the plugin locally:
-1. Configure your API key in the Dify dashboard
-2. Send a test request to the /process endpoint
+2. Install development dependencies:
+   ```bash
+   pip install -r requirements.txt
+   pip install pytest pytest-cov flake8
+   ```
 
-### Extending the Plugin
-To extend the plugin's functionality:
-1. Add new configuration parameters in `config.yaml`
-2. Extend the `ProcessRequest` model in `app.py` for new input fields
-3. Add new processing logic in the `PluginService` class
-4. Update error handling as needed
+### Running Tests
 
-## Best Practices
+```bash
+pytest tests/
+```
 
-1. Always validate input data using Pydantic models
-2. Use type hints for better code maintainability
-3. Implement proper error handling and logging
-4. Keep configuration flexible using the config.yaml file
-5. Follow Python PEP 8 style guidelines
+### Code Style
 
-## Security Considerations
+This project uses flake8 for code style checking:
 
-1. Never log sensitive information
-2. Use environment variables or secrets for sensitive configuration
-3. Validate and sanitize all input data
-4. Implement rate limiting when necessary
-5. Use HTTPS for all external API calls
+```bash
+flake8 .
+```
+
+### Creating a Release
+
+1. Update version in `difypkg.json`
+2. Create and push a new tag:
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+3. GitHub Actions will automatically:
+   - Build the package
+   - Create a release
+   - Upload the difypkg file
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
-For questions and support, please open an issue in the repository or contact the Dify support team. 
+For questions and support:
+1. Check Facebook's [Messenger Platform documentation](https://developers.facebook.com/docs/messenger-platform)
+2. Open an issue in the repository
+3. Contact the Dify support team 

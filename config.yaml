@@ -1,8 +1,8 @@
 api_version: v1
 kind: plugin
 metadata:
-  name: python-plugin-template
-  description: A template Python plugin for Dify that demonstrates basic functionality
+  name: facebook-messenger
+  description: A plugin for handling Facebook Messenger webhooks and sending messages
 spec:
   runtime: python3.10
   dependencies:
@@ -10,9 +10,8 @@ spec:
     - pydantic==2.5.2
   api:
     http:
-      # Main endpoint for the plugin
-      process:
-        path: /process
+      webhook:
+        path: /webhook
         method: POST
         response_schema:
           type: object
@@ -24,12 +23,16 @@ spec:
             data:
               type: object
     configuration:
-      - name: api_key
+      - name: page_access_token
         type: secret
         required: true
-        description: API key for authentication
-      - name: max_retries
-        type: number
+        description: Facebook Page Access Token for sending messages
+      - name: verify_token
+        type: secret
+        required: true
+        description: Webhook verification token for Facebook Messenger
+      - name: api_version
+        type: string
         required: false
-        default: 3
-        description: Maximum number of retries for API calls 
+        default: "v18.0"
+        description: Facebook Graph API version 
