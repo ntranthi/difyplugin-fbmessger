@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - No unreleased changes at this time
 
+## [1.0.3] - 2024-07-12
+
+### Fixed
+- Fixed manifest.yaml structure by moving endpoint configuration under spec section
+
 ## [1.0.2] - 2024-07-12
 
 ### Fixed
@@ -32,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configuration for page_access_token, verify_token, and api_version
 - Package build script
 
-[Unreleased]: https://github.com/ntranthi/difyplugin-fbmessger/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/ntranthi/difyplugin-fbmessger/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/ntranthi/difyplugin-fbmessger/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/ntranthi/difyplugin-fbmessger/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/ntranthi/difyplugin-fbmessger/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/ntranthi/difyplugin-fbmessger/releases/tag/v1.0.0 

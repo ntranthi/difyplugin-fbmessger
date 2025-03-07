@@ -8,6 +8,10 @@ spec:
   dependencies:
     - requests==2.31.0
     - pydantic==2.5.2
+  endpoint:
+    webhook:
+      function: webhook
+      description: "Handle Facebook Messenger webhook events"
   api:
     http:
       webhook:
@@ -22,10 +26,6 @@ spec:
               type: string
             data:
               type: object
-    endpoint:
-      webhook:
-        function: webhook
-        description: "Handle Facebook Messenger webhook events"
     configuration:
       - name: page_access_token
         type: secret
