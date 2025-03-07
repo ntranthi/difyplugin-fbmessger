@@ -1,0 +1,27 @@
+{
+    "name": "facebook-messenger",
+    "version": "1.0.0",
+    "description": "A Dify plugin for Facebook Messenger integration",
+    "author": "Your Name",
+    "email": "your.email@example.com",
+    "license": "MIT",
+    "repository": "https://github.com/yourusername/dify-facebook-messenger",
+    "files": [
+        "app.py",
+        "config.yaml",
+        "README.md",
+        "requirements.txt"
+    ],
+    "main": "app.py",
+    "dependencies": {
+        "requests": "2.31.0",
+        "pydantic": "2.5.2"
+    },
+    "keywords": [
+        "dify",
+        "facebook",
+        "messenger",
+        "webhook",
+        "chatbot"
+    ]
+} 
