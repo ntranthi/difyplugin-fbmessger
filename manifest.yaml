@@ -22,6 +22,10 @@ spec:
               type: string
             data:
               type: object
+    endpoint:
+      webhook:
+        function: webhook
+        description: "Handle Facebook Messenger webhook events"
     configuration:
       - name: page_access_token
         type: secret
