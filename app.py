@@ -1,72 +1,76 @@
-import json
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import requests
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+import logging
 
-class FacebookMessenger:
-    def __init__(self, config: Dict[str, str]):
-        self.page_access_token = config.get('page_access_token')
-        self.verify_token = config.get('verify_token')
-        self.api_version = 'v18.0'  # Current Facebook API version
-        self.base_url = f'https://graph.facebook.com/{self.api_version}'
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-    def send_message(self, recipient_id: str, message_text: str) -> Dict[str, Any]:
-        """Send message to a specific recipient on Facebook Messenger."""
-        url = f'{self.base_url}/me/messages'
-        params = {'access_token': self.page_access_token}
-        data = {
-            'recipient': {'id': recipient_id},
-            'message': {'text': message_text}
+class ProcessRequest(BaseModel):
+    """Model for incoming process requests"""
+    input_text: str = Field(..., description="Input text to process")
+    parameters: Optional[Dict[str, Any]] = Field(default={}, description="Optional parameters")
+
+class PluginService:
+    """Main service class for the plugin"""
+    def __init__(self, config: Dict[str, Any]):
+        """Initialize the plugin service with configuration"""
+        self.api_key = config.get('api_key')
+        self.max_retries = int(config.get('max_retries', 3))
+        logger.info("Plugin service initialized with max_retries: %d", self.max_retries)
+
+    def _make_api_request(self, endpoint: str, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Make an API request with retry logic"""
+        headers = {
+            'Authorization': f'Bearer {self.api_key}',
+            'Content-Type': 'application/json'
         }
+
+        for attempt in range(self.max_retries):
+            try:
+                response = requests.post(endpoint, json=data, headers=headers)
+                response.raise_for_status()
+                return response.json()
+            except requests.exceptions.RequestException as e:
+                if attempt == self.max_retries - 1:
+                    logger.error("API request failed after %d attempts: %s", self.max_retries, str(e))
+                    raise
+                logger.warning("API request attempt %d failed: %s", attempt + 1, str(e))
         
-        response = requests.post(url, params=params, json=data)
-        return response.json()
+        return {"error": "Max retries exceeded"}
 
-class WebhookRequest(BaseModel):
-    object: str
-    entry: list
+    def process_request(self, request_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Process the incoming request"""
+        try:
+            # Validate request data
+            request = ProcessRequest(**request_data)
+            
+            # Log the incoming request
+            logger.info("Processing request with input: %s", request.input_text)
 
-def webhook(config: Dict[str, str], request_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Handle incoming webhook requests from Facebook Messenger."""
-    messenger = FacebookMessenger(config)
-    
-    # Handle GET requests for webhook verification
-    if request_data.get('hub.mode') == 'subscribe':
-        if request_data.get('hub.verify_token') == messenger.verify_token:
-            return {
-                'success': True,
-                'message': request_data.get('hub.challenge', '')
+            # Example processing logic
+            processed_data = {
+                "input_length": len(request.input_text),
+                "processed_text": request.input_text.upper(),
+                "parameters_received": request.parameters
             }
-        return {
-            'success': False,
-            'message': 'Invalid verify token'
-        }
 
-    try:
-        # Parse the incoming webhook data
-        webhook_data = WebhookRequest(**request_data)
-        
-        # Process each entry in the webhook
-        for entry in webhook_data.entry:
-            if 'messaging' in entry:
-                for messaging_event in entry['messaging']:
-                    sender_id = messaging_event['sender']['id']
-                    
-                    # Handle incoming messages
-                    if 'message' in messaging_event:
-                        # Here you would typically process the message and generate a response
-                        # For now, we'll just echo back their message
-                        if 'text' in messaging_event['message']:
-                            received_text = messaging_event['message']['text']
-                            messenger.send_message(sender_id, f"Echo: {received_text}")
-        
-        return {
-            'success': True,
-            'message': 'Webhook processed successfully'
-        }
-        
-    except Exception as e:
-        return {
-            'success': False,
-            'message': f'Error processing webhook: {str(e)}'
-        } 
+            return {
+                "success": True,
+                "message": "Request processed successfully",
+                "data": processed_data
+            }
+
+        except Exception as e:
+            logger.error("Error processing request: %s", str(e))
+            return {
+                "success": False,
+                "message": f"Error processing request: {str(e)}",
+                "data": {}
+            }
+
+def process(config: Dict[str, Any], request_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Main entry point for the plugin"""
+    service = PluginService(config)
+    return service.process_request(request_data) 
